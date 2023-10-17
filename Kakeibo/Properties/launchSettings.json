@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Kakeibo": {
+      "commandName": "Project",
+      "commandLineArgs": "202310.csv"
+    }
+  }
+}
