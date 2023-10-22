@@ -12,8 +12,8 @@ namespace Kakeibo
         private IEnumerable<string> _shops;
         public int Value => _detales.Sum(d => d.Value);
 
-        public IEnumerable<KeyValuePair<string, int>> Detales => _detales; 
-        private List<KeyValuePair<string, int>> _detales = new List<KeyValuePair<string, int>>();
+        public IEnumerable<Detale> Detales => _detales; 
+        private List<Detale> _detales = new List<Detale>();
 
         public Category(string Name, IEnumerable<string> shops) 
         { 
@@ -28,7 +28,7 @@ namespace Kakeibo
 
         public void Add(string shopName, int value) 
         {
-            _detales.Add(new KeyValuePair<string, int>(shopName, value));
+            _detales.Add(new Detale(shopName, value));
         }
     }
 }

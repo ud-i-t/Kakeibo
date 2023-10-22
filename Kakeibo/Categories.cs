@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,7 +10,7 @@ namespace Kakeibo
     internal class Categories
     {
         private IEnumerable<Category> _categories;
-        private Category _uncategorized = new Category("分類不能", new List<string>());
+        public Category _uncategorized = new Category("その他", new List<string>());
 
         public Categories(string filePath)
         {
@@ -35,8 +36,7 @@ namespace Kakeibo
 
             return categories;
         }
-
-        public void readDetales(string filePath) 
+        public void readDetales(string filePath)
         {
             // ファイル読込
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -64,25 +64,28 @@ namespace Kakeibo
 
         public void output()
         {
-            // 概要出力
-            Console.WriteLine("【概要】");
-            foreach (var category in _categories)
+            using (StreamWriter outStream = new StreamWriter("out.txt"))
             {
-                Console.WriteLine($"{category.Name}, {category.Value}");
-            }
-
-            // 明細出力
-
-            Console.WriteLine("");
-            Console.WriteLine("【明細】");
-            foreach (var category in _categories)
-            {
-                Console.WriteLine($"{category.Name}:");
-                foreach (var detale in category.Detales)
+                // 概要出力
+                outStream.WriteLine("【概要】");
+                foreach (var category in _categories)
                 {
-                    Console.WriteLine($"{detale.Key}, {detale.Value}");
+                    outStream.WriteLine($"{category.Name}, {category.Value}");
                 }
-                Console.WriteLine("");
+
+                // 明細出力
+
+                outStream.WriteLine("");
+                outStream.WriteLine("【明細】");
+                foreach (var category in _categories)
+                {
+                    outStream.WriteLine($"{category.Name}:");
+                    foreach (var detale in category.Detales)
+                    {
+                        outStream.WriteLine($"{detale.CategoryName}, {detale.Value}");
+                    }
+                    outStream.WriteLine("");
+                }
             }
         }
     }
