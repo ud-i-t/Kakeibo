@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Kakeibo
 {
-    internal class Categories
+    internal class Categories : IEnumerable<Category>
     {
         private IEnumerable<Category> _categories;
         public Category _uncategorized = new Category("その他", new List<string>());
@@ -15,6 +16,16 @@ namespace Kakeibo
         public Categories(string filePath)
         {
             _categories = readShops(filePath).Union(new List<Category>() { _uncategorized });
+        }
+
+        public Category GetCategory(string shopName)
+        {
+            var category = _categories.FirstOrDefault(x => x.Contains(shopName));
+            if (category == null)
+            {
+                return _uncategorized;
+            }
+            return category;
         }
 
         private IEnumerable<Category> readShops(string filePath)
@@ -36,57 +47,15 @@ namespace Kakeibo
 
             return categories;
         }
-        public void readDetales(string filePath)
+
+        public IEnumerator<Category> GetEnumerator()
         {
-            // ファイル読込
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            var eis = System.Text.Encoding.GetEncodings();
-
-            // 1行目はヘッダなので読み飛ばす
-            IEnumerable<string> lines = File.ReadLines(filePath, System.Text.Encoding.GetEncoding("shift_jis")).Skip(1);
-
-            // 末尾はカット
-            lines = lines.Take(lines.Count() - 1).ToList();
-
-            foreach (var line in lines)
-            {
-                var csvLine = line.Split(',');
-                var shopName = csvLine[1];
-                var category = _categories.FirstOrDefault(x => x.Contains(shopName));
-                if (category == null)
-                {
-                    _uncategorized.Add(shopName, int.Parse(csvLine[5]));
-                    continue;
-                }
-                category.Add(shopName, int.Parse(csvLine[5]));
-            }
+            return _categories.GetEnumerator();
         }
 
-        public void output()
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            using (StreamWriter outStream = new StreamWriter("out.txt"))
-            {
-                // 概要出力
-                outStream.WriteLine("【概要】");
-                foreach (var category in _categories)
-                {
-                    outStream.WriteLine($"{category.Name}, {category.Value}");
-                }
-
-                // 明細出力
-
-                outStream.WriteLine("");
-                outStream.WriteLine("【明細】");
-                foreach (var category in _categories)
-                {
-                    outStream.WriteLine($"{category.Name}:");
-                    foreach (var detale in category.Detales)
-                    {
-                        outStream.WriteLine($"{detale.CategoryName}, {detale.Value}");
-                    }
-                    outStream.WriteLine("");
-                }
-            }
+            return ((IEnumerable)_categories).GetEnumerator();
         }
     }
 }

@@ -7,5 +7,6 @@ using System.Text;
 string file = args[0];
 var categories = new Categories(@"shops.txt");
 
-categories.readDetales(file);
-categories.output();
+var month = new Month(categories);
+month.readDetales(file);
+month.output();

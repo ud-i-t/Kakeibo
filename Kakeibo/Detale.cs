@@ -8,12 +8,14 @@ namespace Kakeibo
 {
     internal class Detale
     {
-        public string CategoryName { get; }
+        public Category Category { get; }
+        public string ShopName { get; }
         public int Value { get; }
 
-        public Detale(string categoryName, int value)
+        public Detale(Category category, string shopName, int value)
         {
-            CategoryName = categoryName;
+            Category = category;
+            ShopName = shopName;
             Value = value;
         }
     }
