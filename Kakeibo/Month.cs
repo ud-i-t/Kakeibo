@@ -20,6 +20,11 @@ namespace Kakeibo
 
         public void readDetales(string filePath)
         {
+            if(!File.Exists(filePath))
+            {
+                return;
+            }
+
             // ファイル読込
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             var eis = System.Text.Encoding.GetEncodings();
@@ -39,9 +44,14 @@ namespace Kakeibo
             }
         }
 
-        public void output()
+        public int Summary(Category category)
         {
-            using (StreamWriter outStream = new StreamWriter("out.txt"))
+            return _detales.Where(x => x.Category == category).Sum(x => x.Value);
+        }
+
+        public void output(string filename)
+        {
+            using (StreamWriter outStream = new StreamWriter(filename))
             {
                 // 概要出力
                 outStream.WriteLine("【概要】");
@@ -51,7 +61,6 @@ namespace Kakeibo
                 }
 
                 // 明細出力
-
                 outStream.WriteLine("");
                 outStream.WriteLine("【明細】");
                 foreach (var category in _categories)
